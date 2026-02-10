@@ -76,7 +76,7 @@ app.get('/api/health', async (req, res) => {
 // we rely on direct file access (e.g. /pages/login.html).
 // But for the root path '/', we send index.html explicitly if static didn't catch it.
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../index.html'));
+    res.sendFile(path.join(process.cwd(), 'index.html'));
 });
 
 // Start Server
