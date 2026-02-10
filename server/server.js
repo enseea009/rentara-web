@@ -36,8 +36,8 @@ const path = require('path');
 // ... (middleware setup)
 
 // Serve Static Files
-// Serve the root folder components (index.html, styles, js, assets)
-app.use(express.static(path.join(__dirname, '../')));
+// Use process.cwd() to ensure correct pathing on Vercel
+app.use(express.static(process.cwd()));
 
 // Use Routes
 app.use('/api/auth', authRoutes);
