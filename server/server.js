@@ -45,6 +45,31 @@ app.use('/api/cars', carRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/admin', adminRoutes);
 
+app.get('/api/health', async (req, res) => {
+    try {
+        const [rows] = await db.promise().query('SELECT 1');
+        res.json({
+            status: 'ok',
+            database: 'connected',
+            config: {
+                host: process.env.DB_HOST,
+                port: process.env.DB_PORT,
+                user: process.env.DB_USER,
+                name: process.env.DB_NAME
+            }
+        });
+    } catch (err) {
+        res.status(500).json({
+            status: 'error',
+            message: err.message,
+            config: {
+                host: process.env.DB_HOST,
+                port: process.env.DB_PORT
+            }
+        });
+    }
+});
+
 // Catch-all route to serve index.html or 404
 // For a multi-page static site without client-side routing (React/Vue), 
 // we rely on direct file access (e.g. /pages/login.html).
