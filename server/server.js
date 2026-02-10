@@ -75,9 +75,7 @@ app.get('/api/health', async (req, res) => {
 // For a multi-page static site without client-side routing (React/Vue), 
 // we rely on direct file access (e.g. /pages/login.html).
 // But for the root path '/', we send index.html explicitly if static didn't catch it.
-app.get('/', (req, res) => {
-    res.sendFile(path.join(process.cwd(), 'index.html'));
-});
+// Health check is above. Vercel will serve index.html natively from the root folder.
 
 // Start Server
 app.listen(PORT, () => {
