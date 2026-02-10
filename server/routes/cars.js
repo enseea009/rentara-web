@@ -32,8 +32,12 @@ router.get('/', async (req, res) => {
         const [cars] = await db.promise().query(query, params);
         res.json(cars);
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Server error' });
+        console.error("Database query failed:", err);
+        res.status(500).json({
+            message: 'Server error',
+            error: err.message,
+            query: query.substring(0, 100) + "..."
+        });
     }
 });
 
