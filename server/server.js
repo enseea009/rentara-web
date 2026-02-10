@@ -49,13 +49,13 @@ app.use('/api/admin', adminRoutes);
 app.get('/api/health', async (req, res) => {
     try {
         const [rows] = await db.promise().query('SELECT 1');
+        const [carCount] = await db.promise().query('SELECT COUNT(*) as count FROM cars');
         res.json({
             status: 'ok',
             database: 'connected',
+            cars_in_database: carCount[0].count,
             config: {
                 host: process.env.DB_HOST,
-                port: process.env.DB_PORT,
-                user: process.env.DB_USER,
                 name: process.env.DB_NAME
             }
         });
@@ -63,10 +63,7 @@ app.get('/api/health', async (req, res) => {
         res.status(500).json({
             status: 'error',
             message: err.message,
-            config: {
-                host: process.env.DB_HOST,
-                port: process.env.DB_PORT
-            }
+            tip: "If it says 'table cars doesn't exist', run node scripts/cloud-init.js in your local terminal."
         });
     }
 });
