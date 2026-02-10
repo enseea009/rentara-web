@@ -51,6 +51,36 @@ app.get('/api/health', async (req, res) => {
     }
 });
 
+app.get('/api/init-admin', async (req, res) => {
+    const bcrypt = require('bcryptjs');
+    try {
+        const password = 'admin123';
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(password, salt);
+
+        // Check if admin already exists
+        const [existing] = await db.promise().query('SELECT id FROM users WHERE email = ?', ['admin@rentara.com']);
+
+        if (existing.length > 0) {
+            return res.json({ status: 'info', message: 'Admin already exists' });
+        }
+
+        await db.promise().query(
+            "INSERT INTO users (first_name, last_name, email, phone, password_hash, role) VALUES ('System', 'Admin', 'admin@rentara.com', '0000000000', ?, 'admin')",
+            [hash]
+        );
+
+        res.json({
+            status: 'success',
+            message: 'Admin user created successfully!',
+            email: 'admin@rentara.com',
+            password: 'admin123'
+        });
+    } catch (err) {
+        res.status(500).json({ status: 'error', message: err.message });
+    }
+});
+
 // For Vercel, we don't need app.listen() but we keep it for local testing
 if (process.env.NODE_ENV !== 'production') {
     const PORT = process.env.PORT || 3000;
