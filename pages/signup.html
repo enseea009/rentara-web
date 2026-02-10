@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rentara - Sign Up</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../assets/images/hero-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 20px;
+        }
+
+        .auth-box {
+            background: rgba(26, 27, 32, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-header h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-wrapper input:focus {
+            border-color: var(--primary-color);
+        }
+
+        .btn-auth {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: black;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-auth:hover {
+            background: var(--primary-hover);
+        }
+
+        .auth-footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+
+        .auth-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .error-message {
+            color: var(--danger);
+            text-align: center;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .success-message {
+            color: var(--success);
+            text-align: center;
+            margin-bottom: 15px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <div class="auth-header">
+                <a href="../index.html" class="logo" style="display: block; margin-bottom: 20px;">RENTARA</a>
+                <h2>Create Account</h2>
+                <p style="color: var(--text-gray);">Join us for a seamless journey</p>
+            </div>
+
+            <form id="signup-form">
+                <div class="error-message" id="error-msg"></div>
+                <div class="success-message" id="success-msg">Account created! Redirecting...</div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>First Name</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-user"></i>
+                            <input type="text" id="first_name" required placeholder="First Name">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Last Name</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-user"></i>
+                            <input type="text" id="last_name" required placeholder="Last Name">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="email" required placeholder="name@example.com">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Phone Number</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-phone"></i>
+                        <input type="text" id="phone" required placeholder="0912 345 6789">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="password" required placeholder="Create a password">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-auth">Sign Up</button>
+            </form>
+
+            <div class="auth-footer">
+                Already have an account? <a href="login.html">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/app.js"></script>
+    <script src="../js/auth.js"></script>
+</body>
+
+</html>

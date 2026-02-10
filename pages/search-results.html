@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rentara - Available Cars</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .results-header {
+            padding: 100px 50px 30px;
+            text-align: center;
+        }
+
+        .search-criteria {
+            background: rgba(255, 255, 255, 0.05);
+            display: inline-flex;
+            gap: 20px;
+            padding: 15px 30px;
+            border-radius: 30px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .criteria-item {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        .criteria-item strong {
+            color: white;
+            margin-left: 5px;
+        }
+
+        .cars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .car-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s;
+        }
+
+        .car-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .car-image {
+            width: 100%;
+            height: 200px;
+            background-color: #333;
+            object-fit: cover;
+        }
+
+        .car-details {
+            padding: 20px;
+        }
+
+        .car-name {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .car-type {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .car-price {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-select {
+            background: white;
+            color: black;
+            border: none;
+            padding: 8px 25px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .btn-select:hover {
+            background: #ddd;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="../index.html" class="logo">RENTARA</a>
+        <nav class="nav-links">
+            <a href="about.html">About</a>
+            <a href="vehicles.html">Vehicles</a>
+            <a href="manage-booking.html">Manage Booking</a>
+        </nav>
+        <div class="auth-links" id="auth-section">
+            <a href="login.html"><i class="fa-solid fa-user-circle"></i> Login / Sign-Up</a>
+        </div>
+    </header>
+
+    <div class="results-header">
+        <h1>Select Your Vehicle</h1>
+        <div class="search-criteria">
+            <div class="criteria-item"><i class="fa-regular fa-calendar"></i> Start: <strong
+                    id="display-start">...</strong></div>
+            <div class="criteria-item"><i class="fa-regular fa-calendar-check"></i> End: <strong
+                    id="display-end">...</strong></div>
+            <div class="criteria-item"><i class="fa-solid fa-car"></i> Type: <strong id="display-type">...</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="cars-grid" id="results-container">
+        <p style="text-align: center; grid-column: 1/-1;">Searching for available cars...</p>
+    </div>
+
+    <script src="../js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Auth check is now handled globally in app.js
+
+            // Parse URL params
+            const urlParams = new URLSearchParams(window.location.search);
+            const type = urlParams.get('type');
+            const startDate = urlParams.get('start_date');
+            const endDate = urlParams.get('end_date');
+
+            // Display params
+            document.getElementById('display-type').textContent = type || 'All';
+            document.getElementById('display-start').textContent = startDate;
+            document.getElementById('display-end').textContent = endDate;
+
+            if (!startDate || !endDate) {
+                alert('Please select valid dates.');
+                window.location.href = '../index.html';
+                return;
+            }
+
+            const container = document.getElementById('results-container');
+
+            try {
+                // Fetch available cars (simulated filter)
+                // In a real app, we pass dates to exclude rented cars
+                const url = type ? `${API_BASE_URL}/cars?type=${type}` : `${API_BASE_URL}/cars`;
+                const response = await fetch(url);
+                const cars = await response.json();
+
+                if (cars.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No cars found matching your criteria.</p>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                cars.forEach(car => {
+                    const card = document.createElement('div');
+                    card.className = 'car-card';
+                    // Calculate totals?
+                    card.innerHTML = `
+                        <img src="../${car.image_url}" alt="${car.name}" class="car-image">
+                        <div class="car-details">
+                            <h3 class="car-name">${car.name}</h3>
+                            <p class="car-type">${car.brand} - ${car.type}</p>
+                             <div style="font-size: 0.9rem; margin-bottom: 10px; color: #aaa;">
+                                <i class="fa-solid fa-user-group"></i> ${car.passengers} Seats &bullet; 
+                                <i class="fa-solid fa-gear"></i> ${car.transmission}
+                            </div>
+                            <div class="car-price">
+                                ₱${car.price_per_day} <span style="font-size: 0.8rem; font-weight: 400; color: #aaa;">/day</span>
+                                <a href="payment.html?car_id=${car.id}&start=${startDate}&end=${endDate}" class="btn-select">Select</a>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: var(--danger);">Error loading results.</p>';
+            }
+        });
+    </script>
+</body>
+
+</html>

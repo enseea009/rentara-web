@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rentara - Admin Dashboard</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header
+        style="background: var(--dark-bg); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 100;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <a href="#" class="logo">RENTARA</a>
+            <span class="status-badge badge-pending" style="font-size: 0.7rem;">ADMIN PORTAL</span>
+        </div>
+
+        <div class="auth-links">
+            <a href="javascript:logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </header>
+
+    <div class="admin-container">
+
+        <!-- Stats Overview -->
+        <div class="stats-grid" id="stats-container">
+            <!-- Populated by JS -->
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-spinner fa-spin"></i></div>
+                <div class="stat-info">
+                    <h3>Loading...</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Returns & Penalties Section -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2 style="color: var(--danger);"><i class="fa-solid fa-clock-rotate-left"></i> Overdue & Returns</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Ref ID</th>
+                            <th>Customer</th>
+                            <th>Car</th>
+                            <th>Due Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="overdue-table">
+                        <tr>
+                            <td colspan="5">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Fleet Management Section -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-car"></i> Fleet Management</h2>
+                <button class="btn-sm btn-primary" onclick="openCarModal()"><i class="fa-solid fa-plus"></i> Add New
+                    Car</button>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Car Name</th>
+                            <th>Type</th>
+                            <th>Price/Day</th>
+                            <th>Quantity</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fleet-table">
+                        <tr>
+                            <td colspan="6">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Recent Bookings Section -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-list"></i> All Bookings</h2>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Ref ID</th>
+                        <th>User</th>
+                        <th>Car</th>
+                        <th>Dates</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="bookings-table">
+                    <tr>
+                        <td colspan="5">Loading...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Car Modal -->
+    <div id="car-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeCarModal()">&times;</span>
+            <h2 style="margin-bottom: 20px;">Manage Vehicle</h2>
+            <form id="car-form">
+                <input type="hidden" id="car-id"> <!-- Hidden ID for edits -->
+                <div class="form-grid">
+                    <div>
+                        <label>Car Name</label>
+                        <input type="text" id="car-name" class="admin-input" required placeholder="e.g. Toyota Vios">
+                    </div>
+                    <div>
+                        <label>Brand</label>
+                        <input type="text" id="car-brand" class="admin-input" required placeholder="e.g. Toyota">
+                    </div>
+                    <div>
+                        <label>Type</label>
+                        <select id="car-type" class="admin-input">
+                            <option value="Sedan">Sedan</option>
+                            <option value="SUV">SUV</option>
+                            <option value="Economy">Economy</option>
+                            <option value="Family">Family</option>
+                            <option value="Compact">Compact</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Transmission</label>
+                        <select id="car-trans" class="admin-input">
+                            <option value="Automatic">Automatic</option>
+                            <option value="Manual">Manual</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Price per Day (₱)</label>
+                        <input type="number" id="car-price" class="admin-input" required>
+                    </div>
+                    <div>
+                        <label>Passengers</label>
+                        <input type="number" id="car-pass" class="admin-input" required value="5">
+                    </div>
+                    <div>
+                        <label>Quantity</label>
+                        <input type="number" id="car-qty" class="admin-input" required value="1" min="1">
+                    </div>
+                    <div>
+                        <label>Status</label>
+                        <select id="car-status" class="admin-input">
+                            <option value="Available">Available</option>
+                            <option value="Maintenance">Maintenance</option>
+                        </select>
+                    </div>
+                    <div class="full-width">
+                        <label>Image URL</label>
+                        <input type="text" id="car-img" class="admin-input" value="assets/images/vios.jpg"
+                            placeholder="assets/images/...">
+                    </div>
+                </div>
+                <button type="submit" class="btn-auth" style="margin-top: 20px;">Save Vehicle</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Auth Check
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || user.role !== 'admin') {
+                window.location.href = 'admin-login.html';
+                return;
+            }
+
+            loadDashboard();
+        });
+
+        async function loadDashboard() {
+            try {
+                // 1. Fetch Analytics
+                const resAnalytics = await fetch(`${API_BASE_URL}/admin/analytics`);
+                const analytics = await resAnalytics.json();
+
+                // 2. Fetch All Cars
+                const resCars = await fetch(`${API_BASE_URL}/cars`);
+                const cars = await resCars.json();
+
+                // 3. Fetch All Bookings
+                const resBookings = await fetch(`${API_BASE_URL}/bookings`);
+                const bookings = await resBookings.json();
+
+                // --- Render Stats ---
+                const statsContainer = document.getElementById('stats-container');
+                const earnings = analytics.monthlyEarnings[0]?.total || 0;
+
+                statsContainer.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-peso-sign"></i></div>
+                        <div class="stat-info">
+                            <h3>₱${parseFloat(earnings).toLocaleString()}</h3>
+                            <p>Monthly Earnings</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                        <div class="stat-info">
+                            <h3>${analytics.activeBookings}</h3>
+                            <p>Active Bookings</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-car"></i></div>
+                        <div class="stat-info">
+                            <h3>${analytics.totalCars}</h3>
+                            <p>Total Cars in Fleet</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-warehouse"></i></div>
+                        <div class="stat-info">
+                            <h3>${analytics.rentedCars.length}</h3>
+                            <p>Cars Out (Rented)</p>
+                        </div>
+                    </div>
+                `;
+
+                // --- Render Overdue ---
+                const overdueTable = document.getElementById('overdue-table');
+                if (analytics.overdueBookings.length === 0) {
+                    overdueTable.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-gray);">No overdue returns.</td></tr>';
+                } else {
+                    overdueTable.innerHTML = analytics.overdueBookings.map(b => `
+                        <tr>
+                            <td>#${b.id}</td>
+                            <td>${b.first_name} ${b.last_name}</td>
+                            <td>${b.car_name}</td>
+                            <td style="color: var(--danger); font-weight: bold;">${new Date(b.end_date).toLocaleDateString()}</td>
+                            <td><button class="btn-sm btn-success" onclick="processReturn(${b.id})">Return & Penalty</button></td>
+                        </tr>
+                    `).join('');
+                }
+
+                // --- Render Fleet ---
+                const fleetTable = document.getElementById('fleet-table');
+                fleetTable.innerHTML = cars.map(c => `
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <img src="../${c.image_url}" style="width: 40px; height: 40px; border-radius: 5px; object-fit: cover;">
+                                <span>${c.name}</span>
+                            </div>
+                        </td>
+                        <td>${c.type}</td>
+                        <td>₱${c.price_per_day}</td>
+                        <td>${c.quantity}</td>
+                        <td><span class="status-badge ${c.status === 'Available' ? 'badge-confirmed' : 'badge-pending'}">${c.status}</span></td>
+                        <td>
+                            <button class="btn-sm btn-primary" onclick='editCar(${JSON.stringify(c)})'><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-sm btn-danger" onclick="deleteCar(${c.id})"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                // --- Render Bookings ---
+                const bookingsTable = document.getElementById('bookings-table');
+                bookingsTable.innerHTML = bookings.map(b => `
+                    <tr>
+                        <td>#${b.id}</td>
+                        <td>${b.first_name} ${b.last_name}</td>
+                        <td>${b.brand} ${b.car_name}</td>
+                        <td>${new Date(b.start_date).toLocaleDateString()} - ${new Date(b.end_date).toLocaleDateString()}</td>
+                        <td>
+                            <span class="status-badge 
+                                ${b.status === 'Confirmed' ? 'badge-confirmed' : b.status === 'Pending' ? 'badge-pending' : b.status === 'Cancelled' ? 'badge-cancelled' : 'badge-completed'}">
+                                ${b.status}
+                            </span>
+                             ${b.is_returned ? '<span class="status-badge badge-completed" style="margin-left:5px;">Returned</span>' : ''}
+                        </td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // --- Functions ---
+
+        async function processReturn(id) {
+            if (!confirm("Is the car returned? This will calculate any penalties.")) return;
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/admin/return/${id}`, { method: 'PUT' });
+                const data = await res.json();
+
+                if (res.ok) {
+                    if (data.penalty > 0) {
+                        alert(`Car returned! \n⚠️ LATE RETURN PENALTY: ₱${data.penalty.toLocaleString()}`);
+                    } else {
+                        alert('Car returned successfully. No penalty.');
+                    }
+                    loadDashboard();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        async function deleteCar(id) {
+            if (!confirm("Are you sure? This cannot be undone.")) return;
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/cars/${id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    loadDashboard();
+                } else {
+                    alert("Cannot delete car. It may have active bookings.");
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('car-modal');
+        const form = document.getElementById('car-form');
+
+        function openCarModal() {
+            form.reset();
+            document.getElementById('car-id').value = '';
+            modal.style.display = 'block';
+        }
+
+        function editCar(car) {
+            document.getElementById('car-id').value = car.id;
+            document.getElementById('car-name').value = car.name;
+            document.getElementById('car-brand').value = car.brand;
+            document.getElementById('car-type').value = car.type;
+            document.getElementById('car-price').value = car.price_per_day;
+            document.getElementById('car-trans').value = car.transmission;
+            document.getElementById('car-pass').value = car.passengers;
+            document.getElementById('car-qty').value = car.quantity || 1;
+            document.getElementById('car-status').value = car.status;
+            document.getElementById('car-img').value = car.image_url;
+            modal.style.display = 'block';
+        }
+
+        function closeCarModal() {
+            modal.style.display = 'none';
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('car-id').value;
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${API_BASE_URL}/cars/${id}` : `${API_BASE_URL}/cars`;
+
+            const data = {
+                name: document.getElementById('car-name').value,
+                brand: document.getElementById('car-brand').value,
+                type: document.getElementById('car-type').value,
+                price_per_day: document.getElementById('car-price').value,
+                transmission: document.getElementById('car-trans').value,
+                passengers: document.getElementById('car-pass').value,
+                quantity: document.getElementById('car-qty').value,
+                status: document.getElementById('car-status').value,
+                image_url: document.getElementById('car-img').value
+            };
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    closeCarModal();
+                    loadDashboard();
+                } else {
+                    alert('Error saving car');
+                }
+            } catch (err) { console.error(err); }
+        });
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                closeCarModal();
+            }
+        }
+    </script>
+</body>
+
+</html>

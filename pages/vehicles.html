@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rentara - Our Fleet</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .filter-bar {
+            background: var(--card-bg);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: var(--primary-color);
+            color: black;
+            border-color: var(--primary-color);
+        }
+
+        .cars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .car-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s;
+        }
+
+        .car-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .car-image {
+            width: 100%;
+            height: 200px;
+            background-color: #333;
+            /* Placeholder color */
+            object-fit: cover;
+        }
+
+        .car-details {
+            padding: 20px;
+        }
+
+        .car-name {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .car-type {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .car-specs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #ddd;
+        }
+
+        .car-specs span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .car-price {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-book-sm {
+            background: var(--primary-color);
+            color: black;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <header style="position: relative; background: var(--dark-bg);">
+        <a href="../index.html" class="logo">RENTARA</a>
+        <nav class="nav-links">
+            <a href="about.html">About</a>
+            <a href="vehicles.html" class="active" style="color: var(--primary-color);">Vehicles</a>
+            <a href="manage-booking.html">Manage Booking</a>
+        </nav>
+        <div class="auth-links" id="auth-section">
+            <a href="login.html"><i class="fa-solid fa-user-circle"></i> Login / Sign-Up</a>
+        </div>
+        <div class="nav-links">
+            <a href="help.html"><i class="fa-solid fa-circle-question"></i> Help</a>
+        </div>
+    </header>
+
+    <div class="filter-bar">
+        <button class="filter-btn active" onclick="filterCars('all')">All</button>
+        <button class="filter-btn" onclick="filterCars('Sedan')">Sedan</button>
+        <button class="filter-btn" onclick="filterCars('SUV')">SUV</button>
+        <button class="filter-btn" onclick="filterCars('Economy')">Economy</button>
+        <button class="filter-btn" onclick="filterCars('Family')">Family</button>
+        <button class="filter-btn" onclick="filterCars('Compact')">Compact</button>
+    </div>
+
+    <div class="cars-grid" id="cars-container">
+        <!-- Cars will be loaded here via JS -->
+        <p style="text-align: center; grid-column: 1/-1;">Loading vehicles...</p>
+    </div>
+
+    <footer>
+        &copy; 2026 Rentara Car Rental. All rights reserved.
+    </footer>
+
+    <script src="../js/app.js"></script>
+    <script>
+        // Auth check is now handled globally in app.js
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCars();
+        });
+
+        async function loadCars(type = 'all') {
+            const container = document.getElementById('cars-container');
+            container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Loading...</p>';
+
+            try {
+                // Fetch from API
+                const url = type === 'all' ? `${API_BASE_URL}/cars` : `${API_BASE_URL}/cars?type=${type}`;
+                const response = await fetch(url);
+
+                if (!response.ok) throw new Error('Failed to fetch cars');
+
+                const cars = await response.json();
+
+                container.innerHTML = '';
+
+                if (cars.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No vehicles found.</p>';
+                    return;
+                }
+
+                cars.forEach(car => {
+                    const card = document.createElement('div');
+                    card.className = 'car-card';
+                    card.innerHTML = `
+                        <img src="../${car.image_url}" alt="${car.name}" class="car-image">
+                        <div class="car-details">
+                            <h3 class="car-name">${car.name}</h3>
+                            <p class="car-type">${car.brand} - ${car.type}</p>
+                            <div class="car-specs">
+                                <span><i class="fa-solid fa-gear"></i> ${car.transmission}</span>
+                                <span><i class="fa-solid fa-user-group"></i> ${car.passengers} Seats</span>
+                            </div>
+                            <div class="car-price">
+                                ₱${car.price_per_day}/day
+                                <button class="btn-book-sm" onclick="bookCar(${car.id})">Book</button>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error("Error loading cars:", error);
+                container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: var(--danger);">Unable to load vehicles. Server might be offline.</p>';
+            }
+        }
+
+        function filterCars(type) {
+            // Update buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.innerText === type || (type === 'all' && btn.innerText === 'All')) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Reload cars
+            loadCars(type);
+        }
+
+        function bookCar(carId) {
+            // Check auth first? Or redirect to details
+            const user = localStorage.getItem('user');
+            if (user) {
+                // Determine dates - for now just redirect to search or a details page
+                // Ideally, we open the payment flow if dates were selected, but here we just have the car list.
+                // Redirect to home to pick dates? Or payment prepopulated?
+                // Let's redirect to search results with that car pre-selected or just back to home
+                alert('Please select your rental dates on the home page to proceed with booking.');
+                window.location.href = '../index.html';
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+
+</html>

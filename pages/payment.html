@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rentara - Secure Payment</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .payment-container {
+            display: flex;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 100px auto 50px;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+
+        .details-section,
+        .summary-section {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .details-section {
+            flex: 2;
+            min-width: 300px;
+        }
+
+        .summary-section {
+            flex: 1;
+            min-width: 300px;
+            height: fit-content;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-row .input-group {
+            flex: 1;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-gray);
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: white;
+            outline: none;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .method-card {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .method-card.active {
+            border-color: var(--primary-color);
+            background: rgba(245, 197, 24, 0.1);
+        }
+
+        .method-card i {
+            display: block;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: var(--text-gray);
+        }
+
+        .method-card.active i {
+            color: var(--primary-color);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: var(--text-gray);
+        }
+
+        .total-row {
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            color: var(--primary-color);
+        }
+
+        .btn-pay {
+            width: 100%;
+            background: var(--primary-color);
+            color: black;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-pay:hover {
+            background: var(--primary-hover);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="../index.html" class="logo">RENTARA</a>
+    </header>
+
+    <div class="payment-container">
+        <!-- Review Details -->
+        <div class="details-section">
+            <h2><i class="fa-solid fa-user-pen"></i> Review Your Details</h2>
+            <form id="payment-form">
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>First Name</label>
+                        <input type="text" id="first_name" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Last Name</label>
+                        <input type="text" id="last_name" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Phone Number</label>
+                        <input type="text" id="phone" required>
+                    </div>
+                </div>
+
+                <h2 style="margin-top: 40px;"><i class="fa-solid fa-wallet"></i> Payment Method</h2>
+                <div class="payment-methods">
+                    <div class="method-card active" onclick="selectPayment('GCash')">
+                        <i class="fa-solid fa-mobile-screen"></i>
+                        GCash
+                    </div>
+                    <div class="method-card" onclick="selectPayment('Credit Card')">
+                        <i class="fa-solid fa-credit-card"></i>
+                        Credit Card
+                    </div>
+                    <div class="method-card" onclick="selectPayment('Debit Card')">
+                        <i class="fa-regular fa-credit-card"></i>
+                        Debit Card
+                    </div>
+                    <div class="method-card" onclick="selectPayment('Cash')">
+                        <i class="fa-solid fa-coins"></i>
+                        Cash on Pick-up
+                    </div>
+                </div>
+                <input type="hidden" id="selected-payment" value="GCash">
+
+                <!-- GCash Input -->
+                <div class="input-group payment-input" id="input-gcash">
+                    <label>GCash Number</label>
+                    <input type="text" id="gcash-number" placeholder="09XX XXX XXXX">
+                </div>
+
+                <!-- Card Input -->
+                <div class="payment-input" id="input-card" style="display: none;">
+                    <div class="input-group">
+                        <label>Card Number</label>
+                        <input type="text" id="card-number" placeholder="XXXX XXXX XXXX XXXX">
+                    </div>
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label>Expiry Date</label>
+                            <input type="text" placeholder="MM/YY">
+                        </div>
+                        <div class="input-group">
+                            <label>CVV</label>
+                            <input type="text" placeholder="123">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cash Message -->
+                <div class="payment-input" id="input-cash" style="display: none;">
+                    <p
+                        style="color: var(--success); background: rgba(0,255,0,0.1); padding: 15px; border-radius: 10px;">
+                        <i class="fa-solid fa-check-circle"></i> Please pay at the counter upon vehicle pick-up.
+                    </p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Booking Summary -->
+        <div class="summary-section">
+            <h2>Booking Summary</h2>
+            <div id="car-summary">
+                <h3 id="car-name">Loading...</h3>
+                <p id="car-type" style="color: var(--text-gray); margin-bottom: 20px;">...</p>
+                <img id="car-img" src="" style="width: 100%; border-radius: 10px; margin-bottom: 20px; display: none;">
+            </div>
+
+            <div class="summary-row">
+                <span>Start Date</span>
+                <span id="summary-start">...</span>
+            </div>
+            <div class="summary-row">
+                <span>End Date</span>
+                <span id="summary-end">...</span>
+            </div>
+            <div class="summary-row">
+                <span>Duration</span>
+                <span id="summary-days">0 days</span>
+            </div>
+            <div class="summary-row">
+                <span>Rate per day</span>
+                <span id="summary-rate">₱0</span>
+            </div>
+
+            <div class="total-row">
+                <span>Total to Pay</span>
+                <span id="summary-total">₱0</span>
+            </div>
+
+            <button type="button" class="btn-pay" onclick="processPayment()">Proceed to Payment</button>
+        </div>
+    </div>
+
+    <script src="../js/app.js"></script>
+    <script>
+        let currentCar = null;
+        let totalPrice = 0;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+
+            if (!user) {
+                alert('Please login to continue booking.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Pre-fill user details
+            document.getElementById('first_name').value = user.first_name || '';
+            document.getElementById('last_name').value = user.last_name || '';
+            document.getElementById('email').value = user.email || '';
+
+            // Get URL Params
+            const urlParams = new URLSearchParams(window.location.search);
+            const carId = urlParams.get('car_id');
+            const startStr = urlParams.get('start');
+            const endStr = urlParams.get('end');
+
+            document.getElementById('summary-start').textContent = startStr;
+            document.getElementById('summary-end').textContent = endStr;
+
+            // Calculate days
+            const start = new Date(startStr);
+            const end = new Date(endStr);
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById('summary-days').textContent = `${diffDays} days`;
+
+            // Fetch Car
+            try {
+                // In real app, create get-one-car endpoint
+                const response = await fetch(`${API_BASE_URL}/cars`);
+                const cars = await response.json();
+                currentCar = cars.find(c => c.id == carId);
+
+                if (currentCar) {
+                    document.getElementById('car-name').textContent = currentCar.name;
+                    document.getElementById('car-type').textContent = `${currentCar.brand} - ${currentCar.type}`;
+                    document.getElementById('car-img').src = `../${currentCar.image_url}`;
+                    document.getElementById('car-img').style.display = 'block';
+                    document.getElementById('summary-rate').textContent = `₱${currentCar.price_per_day}`;
+
+                    totalPrice = diffDays * currentCar.price_per_day;
+                    document.getElementById('summary-total').textContent = `₱${totalPrice}`;
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        function selectPayment(method) {
+            document.querySelectorAll('.method-card').forEach(c => c.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.getElementById('selected-payment').value = method;
+
+            // Hide all lists
+            document.querySelectorAll('.payment-input').forEach(el => el.style.display = 'none');
+
+            // Show relevant input
+            if (method === 'GCash') {
+                document.getElementById('input-gcash').style.display = 'block';
+            } else if (method === 'Credit Card' || method === 'Debit Card') {
+                document.getElementById('input-card').style.display = 'block';
+            } else {
+                document.getElementById('input-cash').style.display = 'block';
+            }
+        }
+
+        async function processPayment() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const urlParams = new URLSearchParams(window.location.search);
+
+            const bookingData = {
+                user_id: user.id,
+                car_id: urlParams.get('car_id'),
+                start_date: urlParams.get('start'),
+                end_date: urlParams.get('end'),
+                total_price: totalPrice,
+                payment_method: document.getElementById('selected-payment').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/bookings`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(bookingData)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    window.location.href = `confirmation.html?ref=${data.bookingId}`;
+                } else {
+                    alert('Booking failed. Please try again.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Server error.');
+            }
+        }
+    </script>
+</body>
+
+</html>

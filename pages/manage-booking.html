@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rentara - Manage Booking</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dashboard-container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .booking-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .booking-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background: #eab308;
+            color: black;
+        }
+
+        .status-confirmed {
+            background: var(--success);
+            color: black;
+        }
+
+        .status-completed {
+            background: var(--primary-color);
+            color: black;
+        }
+
+        .status-cancelled {
+            background: var(--danger);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .booking-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header style="position: relative; background: var(--dark-bg);">
+        <a href="../index.html" class="logo">RENTARA</a>
+        <nav class="nav-links">
+            <a href="about.html">About</a>
+            <a href="vehicles.html">Vehicles</a>
+            <a href="manage-booking.html" class="active" style="color: var(--primary-color);">Manage Booking</a>
+        </nav>
+        <div class="auth-links" id="auth-section">
+            <a href="login.html"><i class="fa-solid fa-user-circle"></i> Login / Sign-Up</a>
+        </div>
+        <div class="nav-links">
+            <a href="help.html"><i class="fa-solid fa-circle-question"></i> Help</a>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <h1>My Bookings</h1>
+        <div id="bookings-list">
+            <p>Loading your bookings...</p>
+        </div>
+    </div>
+
+    <script src="../js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const token = localStorage.getItem('token');
+
+            if (!user || !token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const list = document.getElementById('bookings-list');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/bookings/user/${user.id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch bookings');
+
+                const bookings = await response.json();
+
+                if (bookings.length === 0) {
+                    list.innerHTML = '<p>You have no bookings yet.</p>';
+                    return;
+                }
+
+                list.innerHTML = bookings.map(booking => {
+                    const startDate = new Date(booking.start_date);
+                    const now = new Date();
+                    startDate.setHours(0, 0, 0, 0);
+                    now.setHours(0, 0, 0, 0);
+
+                    const canCancel = (booking.status === 'Pending' || booking.status === 'Confirmed') && now < startDate;
+
+                    return `
+                    <div class="booking-card">
+                        <div style="flex: 1;">
+                            <h3>${booking.car_name}</h3>
+                            <p style="color: var(--text-gray);">${booking.brand} - ${booking.type}</p>
+                        </div>
+                        <div style="flex: 1;">
+                            <p><i class="fa-regular fa-calendar"></i> ${new Date(booking.start_date).toDateString()} - ${new Date(booking.end_date).toDateString()}</p>
+                            <p style="font-weight: bold; margin-top: 5px;">Total: ₱${booking.total_price}</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <div><span class="booking-status status-${booking.status.toLowerCase()}">${booking.status}</span></div>
+                            ${canCancel ? `<button onclick="cancelBooking(${booking.id})" style="background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 5px 10px; border-radius: 10px; margin-top: 10px; cursor: pointer;">Cancel Booking</button>` : ''}
+                        </div>
+                    </div>
+                `}).join('');
+
+            } catch (error) {
+                console.error(error);
+                list.innerHTML = '<p style="color: var(--danger);">Error loading bookings.</p>';
+            }
+        });
+
+        async function cancelBooking(id) {
+            if (!confirm('Are you sure you want to cancel this booking?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/bookings/cancel/${id}`, {
+                    method: 'PUT'
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Booking cancelled.');
+                    location.reload();
+                } else {
+                    alert(data.message || 'Cannot cancel booking.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Server error');
+            }
+        }
+    </script>
+</body>
+
+</html>

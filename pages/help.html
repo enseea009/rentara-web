@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rentara - Help Center</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .faq-section {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .faq-item {
+            background: var(--card-bg);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .faq-answer {
+            padding: 0 20px 20px 20px;
+            color: #ddd;
+            display: none;
+            line-height: 1.6;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        .contact-box {
+            background: rgba(245, 197, 24, 0.1);
+            border: 1px solid var(--primary-color);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <header style="position: relative; background: var(--dark-bg);">
+        <a href="../index.html" class="logo">RENTARA</a>
+        <nav class="nav-links">
+            <a href="about.html">About</a>
+            <a href="vehicles.html">Vehicles</a>
+            <a href="manage-booking.html">Manage Booking</a>
+        </nav>
+        <div class="auth-links" id="auth-section">
+            <a href="login.html"><i class="fa-solid fa-user-circle"></i> Login / Sign-Up</a>
+        </div>
+        <div class="nav-links">
+            <a href="help.html" class="active" style="color: var(--primary-color);"><i
+                    class="fa-solid fa-circle-question"></i> Help</a>
+        </div>
+    </header>
+
+    <div style="max-width: 1000px; margin: 0 auto; padding: 40px 20px;">
+        <h1 style="text-align: center; margin-bottom: 40px;">How can we help?</h1>
+
+        <div class="contact-box">
+            <h2><i class="fa-solid fa-headset"></i> Customer Support</h2>
+            <p style="margin: 15px 0;">Need immediate assistance? Our team is here for you.</p>
+
+            <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-top: 20px;">
+                <div>
+                    <i class="fa-solid fa-phone" style="color: var(--primary-color); font-size: 1.5rem;"></i>
+                    <p style="margin-top: 5px;">Hotline: (02) 8-123-4567</p>
+                </div>
+                <div>
+                    <i class="fa-solid fa-envelope" style="color: var(--primary-color); font-size: 1.5rem;"></i>
+                    <p style="margin-top: 5px;">Email: support@rentara.ph</p>
+                </div>
+                <div>
+                    <i class="fa-solid fa-location-dot" style="color: var(--primary-color); font-size: 1.5rem;"></i>
+                    <p style="margin-top: 5px;">Sampaloc, Manila</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 style="margin-bottom: 20px;">Frequently Asked Questions</h2>
+        <div class="faq-section" style="margin-top: 0;">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    What requirements do I need to rent a car?
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    You need a valid driver's license, a government-issued ID, and a proof of billing. For foreign
+                    renters, an international driving permit may be required.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    Can I pay using GCash?
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    Yes! We accept Cash, Credit/Debit Cards, and GCash payments.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    Is fuel included in the rental?
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    No, fuel is not included. The car is provided with a full tank and must be returned with a full tank
+                    to avoid refueling charges.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    Can I cancel my booking?
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    Yes, you can cancel your booking through the Manage Booking page. Cancellation fees may apply
+                    depending on how close to the rental date you cancel.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 Rentara Car Rental. All rights reserved.
+    </footer>
+
+    <script src="../js/app.js"></script>
+    <script>
+        function toggleFaq(element) {
+            const item = element.parentElement;
+            item.classList.toggle('active');
+        }
+    </script>
+</body>
+
+</html>

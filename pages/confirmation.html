@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rentara - Booking Confirmed</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .confirmation-container {
+            max-width: 600px;
+            margin: 100px auto;
+            text-align: center;
+            background: var(--card-bg);
+            padding: 50px;
+            border-radius: 30px;
+            border: 1px solid var(--border-color);
+        }
+
+        .success-icon {
+            font-size: 5rem;
+            color: var(--success);
+            margin-bottom: 20px;
+        }
+
+        .btn-home {
+            background: var(--primary-color);
+            color: black;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="../index.html" class="logo">RENTARA</a>
+    </header>
+
+    <div class="confirmation-container">
+        <i class="fa-solid fa-circle-check success-icon"></i>
+        <h1>Booking Confirmed!</h1>
+        <p style="color: var(--text-gray); margin: 20px 0;">
+            Thank you for choosing Rentara. Your booking has been successfully placed. <br>
+            Reference ID: <strong id="ref-id">#0000</strong>
+        </p>
+        <p>You can view your booking details in your dashboard.</p>
+
+        <a href="manage-booking.html" class="btn-home">View My Bookings</a>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        document.getElementById('ref-id').textContent = '#' + urlParams.get('ref');
+    </script>
+</body>
+
+</html>
