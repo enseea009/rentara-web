@@ -359,7 +359,8 @@
                     const data = await response.json();
                     window.location.href = `confirmation.html?ref=${data.bookingId}`;
                 } else {
-                    alert('Booking failed. Please try again.');
+                    const errorData = await response.json();
+                    alert(`Booking failed: ${errorData.error || 'Please try again.'}`);
                 }
             } catch (err) {
                 console.error(err);

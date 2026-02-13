@@ -23,8 +23,8 @@ router.post('/', async (req, res) => {
 
         res.status(201).json({ message: 'Booking confirmed', bookingId });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Server error' });
+        console.error("Booking creation error:", err);
+        res.status(500).json({ message: 'Server error', error: err.message });
     }
 });
 
