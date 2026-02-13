@@ -481,33 +481,9 @@
                     loadDashboard();
                 } else {
                     alert('Error saving car');
-                    const data = {
-                        name: document.getElementById('car-name').value,
-                        brand: document.getElementById('car-brand').value,
-                        type: document.getElementById('car-type').value,
-                        price_per_day: document.getElementById('car-price').value,
-                        transmission: document.getElementById('car-trans').value,
-                        passengers: document.getElementById('car-pass').value,
-                        quantity: document.getElementById('car-qty').value,
-                        status: document.getElementById('car-status').value,
-                        image_url: document.getElementById('car-img').value
-                    };
-
-                    try {
-                        const res = await fetch(url, {
-                            method: method,
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(data)
-                        });
-
-                        if (res.ok) {
-                            closeCarModal();
-                            loadDashboard();
-                        } else {
-                            alert('Error saving car');
-                        }
-                    } catch (err) { console.error(err); }
-                });
+                }
+            } catch (err) { console.error(err); }
+        });
 
         window.onclick = function (event) {
             if (event.target == modal) {
