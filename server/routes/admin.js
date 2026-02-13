@@ -137,4 +137,49 @@ router.put('/return/:id', async (req, res) => {
     }
 });
 
+// --- User Management ---
+
+// Get All Users
+router.get('/users', async (req, res) => {
+    try {
+        const [users] = await db.promise().query('SELECT id, first_name, last_name, email, phone, role, created_at FROM users ORDER BY created_at DESC');
+        res.json(users);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Update User
+router.put('/users/:id', async (req, res) => {
+    const userId = req.params.id;
+    const { first_name, last_name, email, phone, role } = req.body;
+
+    try {
+        await db.promise().query(
+            'UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ?, role = ? WHERE id = ?',
+            [first_name, last_name, email, phone, role, userId]
+        );
+        res.json({ message: 'User updated successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Delete User
+router.delete('/users/:id', async (req, res) => {
+    const userId = req.params.id;
+
+    try {
+        // Optional: Check if user has active bookings before deleting
+        // For now, simple delete
+        await db.promise().query('DELETE FROM users WHERE id = ?', [userId]);
+        res.json({ message: 'User deleted successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 module.exports = router;
