@@ -142,7 +142,8 @@ router.put('/return/:id', async (req, res) => {
 // Get All Users
 router.get('/users', async (req, res) => {
     try {
-        const [users] = await db.promise().query('SELECT id, first_name, last_name, email, phone, role, created_at FROM users ORDER BY created_at DESC');
+        // Removed created_at to avoid errors if column is missing in older DB schemas
+        const [users] = await db.promise().query('SELECT id, first_name, last_name, email, phone, role FROM users ORDER BY id DESC');
         res.json(users);
     } catch (err) {
         console.error(err);
