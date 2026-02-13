@@ -73,9 +73,28 @@ router.post('/login', async (req, res) => {
                 first_name: user.first_name,
                 last_name: user.last_name,
                 email: user.email,
+                phone: user.phone,
                 role: user.role
             }
         });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Update User Profile
+router.put('/profile/:id', async (req, res) => {
+    const { first_name, last_name, phone } = req.body;
+    const userId = req.params.id;
+
+    try {
+        await db.promise().query(
+            'UPDATE users SET first_name = ?, last_name = ?, phone = ? WHERE id = ?',
+            [first_name, last_name, phone, userId]
+        );
+
+        res.json({ message: 'Profile updated successfully' });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });

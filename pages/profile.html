@@ -123,9 +123,9 @@
                 </div>
                 <div class="input-group">
                     <label>Phone Number</label>
-                    <input type="text" id="phone" value="0912 345 6789">
+                    <input type="text" id="phone" value="">
                 </div>
-                <button type="button" class="btn-action">Save Changes</button>
+                <button type="button" class="btn-action" onclick="saveProfile()">Save Changes</button>
             </form>
         </div>
     </div>
@@ -142,10 +142,50 @@
 
             document.getElementById('display-name').textContent = `${user.first_name} ${user.last_name}`;
             document.getElementById('display-email').textContent = user.email;
-            document.getElementById('first_name').value = user.first_name;
-            document.getElementById('last_name').value = user.last_name;
-            // Phone would need to be in the JWT or fetched separately
+            document.getElementById('first_name').value = user.first_name || '';
+            document.getElementById('last_name').value = user.last_name || '';
+            document.getElementById('email').value = user.email || '';
+            document.getElementById('phone').value = user.phone || '';
         });
+
+        async function saveProfile() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const first_name = document.getElementById('first_name').value;
+            const last_name = document.getElementById('last_name').value;
+            const phone = document.getElementById('phone').value;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/profile/${user.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ first_name, last_name, phone })
+                });
+
+                if (response.ok) {
+                    // Update local storage
+                    user.first_name = first_name;
+                    user.last_name = last_name;
+                    user.phone = phone;
+                    localStorage.setItem('user', JSON.stringify(user));
+
+                    // Update UI
+                    document.getElementById('display-name').textContent = `${first_name} ${last_name}`;
+
+                    alert('Profile updated successfully!');
+
+                    // Trigger global header update
+                    if (typeof updateHeaderAuth === 'function') updateHeaderAuth();
+                } else {
+                    const data = await response.json();
+                    alert('Update failed: ' + data.message);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred. Please try again.');
+            }
+        }
     </script>
 </body>
 
