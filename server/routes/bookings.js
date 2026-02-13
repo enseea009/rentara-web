@@ -9,7 +9,7 @@ router.post('/', async (req, res) => {
     try {
         // Insert booking
         const [result] = await db.promise().query(
-            'INSERT INTO bookings (user_id, car_id, start_date, end_date, total_price, status) VALUES (?, ?, ?, ?, ?, "Confirmed")',
+            "INSERT INTO bookings (user_id, car_id, start_date, end_date, total_price, status) VALUES (?, ?, ?, ?, ?, 'Confirmed')",
             [user_id, car_id, start_date, end_date, total_price]
         );
 
@@ -17,7 +17,7 @@ router.post('/', async (req, res) => {
 
         // Insert payment record
         await db.promise().query(
-            'INSERT INTO payments (booking_id, amount, payment_method, payment_status) VALUES (?, ?, ?, "Paid")',
+            "INSERT INTO payments (booking_id, amount, payment_method, payment_status) VALUES (?, ?, ?, 'Paid')",
             [bookingId, total_price, payment_method]
         );
 
